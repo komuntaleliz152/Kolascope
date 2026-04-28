@@ -1,3 +1,14 @@
 {
-  "rootDirectory": "kolaborate-ai"
+  "builds": [
+    {
+      "src": "kolaborate-ai/package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "kolaborate-ai/$1"
+    }
+  ]
 }
