@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kolaborate AI — AI-Powered Freelance Toolkit
+
+Kolaborate AI helps freelancers save time and win more clients by automating two of the most painful parts of freelancing — writing proposals and scoping projects.
+
+Built for the **Kolaborate Build Challenge · April 2026**.
+
+---
+
+## Features
+
+### Proposal Writer
+Paste a job brief, select your tone, and get a tailored client-ready proposal in seconds.
+- Three tone options: Professional, Friendly, Bold
+- One-click copy
+- Regenerate for a different version
+- Proposal history saved locally (last 5)
+
+### Scope Estimator
+Describe a project in plain English and get a full breakdown instantly.
+- Task list with time estimates and complexity ratings
+- Suggested hourly rate and total budget range
+- Risk flags to watch out for
+- Regenerate anytime
+
+---
+
+## Tech Stack
+
+- [Next.js 14](https://nextjs.org) — App Router
+- [Tailwind CSS](https://tailwindcss.com) — Styling
+- [shadcn/ui](https://ui.shadcn.com) — UI components
+- [Groq API](https://groq.com) — Llama 3.3 70B (AI inference)
+- [Vercel](https://vercel.com) — Deployment
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/komuntaleliz152/Kolascope.git
+cd Kolascope/kolaborate-ai
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Set up environment variables
+
+Create a `.env.local` file in the `kolaborate-ai` root:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+Get your free API key at [console.groq.com](https://console.groq.com).
+
+### 4. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deployment
 
-## Learn More
+Deployed on Vercel. Every push to `master` triggers an automatic redeployment.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Author
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built by Elizabeth Komuntaleliz · [GitHub](https://github.com/komuntaleliz152)
