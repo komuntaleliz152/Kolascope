@@ -42,11 +42,21 @@ export default function ProposalWriter({ user, onAuthRequired }: Props) {
   useEffect(() => {
     if (user) {
       loadHistory();
+      loadProfile();
     } else {
       const saved = localStorage.getItem("proposal-history");
       if (saved) setHistory(JSON.parse(saved));
     }
   }, [user]);
+
+  async function loadProfile() {
+    const { data } = await supabase
+      .from("profiles")
+      .select("bio")
+      .eq("id", user!.id)
+      .single();
+    if (data?.bio) setFreelancerBio(data.bio);
+  }
 
   async function loadHistory() {
     const { data } = await supabase

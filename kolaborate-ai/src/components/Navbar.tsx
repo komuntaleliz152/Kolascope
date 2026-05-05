@@ -68,10 +68,13 @@ export default function Navbar() {
           <div className="flex items-center gap-3">
             {user ? (
               <>
-                <div className="flex items-center gap-2 text-sm text-white/50">
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors"
+                >
                   <User className="w-3.5 h-3.5" />
                   <span className="hidden sm:block truncate max-w-[140px]">{user.email}</span>
-                </div>
+                </Link>
                 <button
                   onClick={handleSignOut}
                   className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white border border-white/10 hover:border-white/20 px-3 py-1.5 rounded-lg transition-all"
