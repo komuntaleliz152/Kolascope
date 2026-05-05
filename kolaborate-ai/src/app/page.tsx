@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BarChart3, PenLine, FileSearch, ArrowRight } from "lucide-react";
+import { BarChart3, PenLine, FileSearch, ArrowRight, DollarSign } from "lucide-react";
 
 const tools = [
   {
@@ -23,6 +23,13 @@ const tools = [
     description: "Paste a vague client brief and get clarity scores, red flags, and questions to ask before starting.",
     cta: "Analyze a brief",
   },
+  {
+    href: "/rates",
+    icon: <DollarSign className="w-6 h-6 text-violet-400" />,
+    title: "Rate Calculator",
+    description: "Enter your expenses and income goals to find your minimum, recommended, and premium hourly rates.",
+    cta: "Calculate my rate",
+  },
 ];
 
 export default function Home() {
@@ -35,7 +42,7 @@ export default function Home() {
           <span className="text-violet-500">Earn smarter.</span>
         </h1>
         <p className="text-white/50 text-xl max-w-xl mx-auto mb-10">
-          Three AI tools built for freelancers — scope projects, write proposals, and analyze client briefs in seconds.
+          Four AI tools built for freelancers — scope projects, write proposals, analyze client briefs, and calculate your rates.
         </p>
         <Link
           href="/scope"
@@ -47,7 +54,7 @@ export default function Home() {
 
       {/* Tools */}
       <section className="max-w-6xl mx-auto px-6 pb-20">
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {tools.map((tool) => (
             <Link
               key={tool.href}

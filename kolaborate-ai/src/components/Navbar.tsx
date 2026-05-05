@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { Sparkles, BarChart3, PenLine, FileSearch, LogIn, LogOut, User, Clock } from "lucide-react";
+import { Sparkles, BarChart3, PenLine, FileSearch, LogIn, LogOut, User, Clock, DollarSign } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import AuthModal from "@/components/AuthModal";
 
@@ -12,6 +12,7 @@ const navItems = [
   { href: "/scope", label: "Scope Estimator", icon: <BarChart3 className="w-4 h-4" /> },
   { href: "/proposal", label: "Proposal Writer", icon: <PenLine className="w-4 h-4" /> },
   { href: "/analyze", label: "Brief Analyzer", icon: <FileSearch className="w-4 h-4" /> },
+  { href: "/rates", label: "Rate Calculator", icon: <DollarSign className="w-4 h-4" /> },
   { href: "/history", label: "History", icon: <Clock className="w-4 h-4" /> },
 ];
 
