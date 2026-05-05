@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
-import { FileText, BarChart3, Trash2, ChevronDown, ChevronUp, Copy, CheckCheck } from "lucide-react";
+import { FileText, BarChart3, Trash2, ChevronDown, ChevronUp, Copy, CheckCheck, Search } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 
 interface Proposal {
@@ -37,6 +37,7 @@ export default function HistoryPage() {
   const [activeTab, setActiveTab] = useState<"proposals" | "estimates">("proposals");
   const [expanded, setExpanded] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -83,11 +84,42 @@ export default function HistoryPage() {
     return "bg-red-500/10 text-red-400 border border-red-500/20";
   };
 
+  const filteredProposals = proposals.filter((p) =>
+    p.job_brief.toLowerCase().includes(search.toLowerCase()) ||
+    p.proposal.toLowerCase().includes(search.toLowerCase()) ||
+    p.tone.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const filteredEstimates = estimates.filter((e) =>
+    e.project_desc.toLowerCase().includes(search.toLowerCase()) ||
+    e.result.summary?.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <main className="max-w-4xl mx-auto px-6 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">History</h1>
         <p className="text-white/50">Your saved proposals and scope estimates.</p>
+      </div>
+
+      {/* Search */}
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-2.5 w-4 h-4 text-white/30" />
+        <input
+          type="text"
+          placeholder="Search proposals and estimates..."
+          className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-violet-500 transition-colors"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        {search && (
+          <button
+            onClick={() => setSearch("")}
+            className="absolute right-3 top-2.5 text-white/30 hover:text-white text-xs"
+          >
+            Clear
+          </button>
+        )}
       </div>
 
       {/* Tabs */}
@@ -100,7 +132,8 @@ export default function HistoryPage() {
               : "bg-white/5 border-white/10 text-white/50 hover:border-white/20"
           }`}
         >
-          <FileText className="w-4 h-4" /> Proposals ({proposals.length})
+          <FileText className="w-4 h-4" />
+          Proposals ({filteredProposals.length})
         </button>
         <button
           onClick={() => setActiveTab("estimates")}
@@ -110,7 +143,8 @@ export default function HistoryPage() {
               : "bg-white/5 border-white/10 text-white/50 hover:border-white/20"
           }`}
         >
-          <BarChart3 className="w-4 h-4" /> Scope Estimates ({estimates.length})
+          <BarChart3 className="w-4 h-4" />
+          Scope Estimates ({filteredEstimates.length})
         </button>
       </div>
 
@@ -118,12 +152,12 @@ export default function HistoryPage() {
         <div className="text-center py-20 text-white/30">Loading...</div>
       ) : activeTab === "proposals" ? (
         <div className="space-y-3">
-          {proposals.length === 0 ? (
+          {filteredProposals.length === 0 ? (
             <div className="text-center py-20 text-white/30 border-2 border-dashed border-white/10 rounded-2xl">
-              No proposals yet. Go to <a href="/proposal" className="text-violet-400 hover:underline">Proposal Writer</a> to create one.
+              {search ? `No proposals matching "${search}"` : <>No proposals yet. Go to <a href="/proposal" className="text-violet-400 hover:underline">Proposal Writer</a> to create one.</>}
             </div>
           ) : (
-            proposals.map((p) => (
+            filteredProposals.map((p) => (
               <div key={p.id} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
                 <div className="flex items-center justify-between p-4">
                   <div className="flex-1 min-w-0">
@@ -165,12 +199,12 @@ export default function HistoryPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {estimates.length === 0 ? (
+          {filteredEstimates.length === 0 ? (
             <div className="text-center py-20 text-white/30 border-2 border-dashed border-white/10 rounded-2xl">
-              No estimates yet. Go to <a href="/scope" className="text-violet-400 hover:underline">Scope Estimator</a> to create one.
+              {search ? `No estimates matching "${search}"` : <>No estimates yet. Go to <a href="/scope" className="text-violet-400 hover:underline">Scope Estimator</a> to create one.</>}
             </div>
           ) : (
-            estimates.map((e) => (
+            filteredEstimates.map((e) => (
               <div key={e.id} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
                 <div className="flex items-center justify-between p-4">
                   <div className="flex-1 min-w-0">
