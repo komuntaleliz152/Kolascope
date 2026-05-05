@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2, Copy, CheckCheck, Wand2, RefreshCw, Trash2, FileText, Briefcase, Handshake, Zap } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 const TONES = [
   { label: "Professional", icon: <Briefcase className="w-3 h-3" /> },
@@ -12,14 +14,20 @@ const TONES = [
 ];
 
 interface SavedProposal {
-  id: number;
-  brief: string;
+  id: string;
+  job_brief?: string;
+  brief?: string;
   proposal: string;
   tone: string;
-  date: string;
+  created_at: string;
 }
 
-export default function ProposalWriter() {
+interface Props {
+  user: User | null;
+  onAuthRequired: () => void;
+}
+
+export default function ProposalWriter({ user, onAuthRequired }: Props) {
   const [jobBrief, setJobBrief] = useState("");
   const [freelancerBio, setFreelancerBio] = useState("");
   const [tone, setTone] = useState("Professional");
@@ -32,9 +40,22 @@ export default function ProposalWriter() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("proposal-history");
-    if (saved) setHistory(JSON.parse(saved));
-  }, []);
+    if (user) {
+      loadHistory();
+    } else {
+      const saved = localStorage.getItem("proposal-history");
+      if (saved) setHistory(JSON.parse(saved));
+    }
+  }, [user]);
+
+  async function loadHistory() {
+    const { data } = await supabase
+      .from("proposals")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(5);
+    if (data) setHistory(data);
+  }
 
   async function generateProposal() {
     if (!jobBrief.trim()) return;
@@ -54,17 +75,27 @@ export default function ProposalWriter() {
       setProposal(data.proposal);
       setTimeout(() => setVisible(true), 50);
 
-      // save to history
-      const entry: SavedProposal = {
-        id: Date.now(),
-        brief: jobBrief.slice(0, 60) + "...",
-        proposal: data.proposal,
-        tone,
-        date: new Date().toLocaleDateString(),
-      };
-      const updated = [entry, ...history].slice(0, 5);
-      setHistory(updated);
-      localStorage.setItem("proposal-history", JSON.stringify(updated));
+      if (user) {
+        await supabase.from("proposals").insert({
+          user_id: user.id,
+          job_brief: jobBrief,
+          freelancer_bio: freelancerBio,
+          tone,
+          proposal: data.proposal,
+        });
+        loadHistory();
+      } else {
+        const entry = {
+          id: Date.now().toString(),
+          brief: jobBrief.slice(0, 60) + "...",
+          proposal: data.proposal,
+          tone,
+          created_at: new Date().toLocaleDateString(),
+        };
+        const updated = [entry, ...history].slice(0, 5);
+        setHistory(updated);
+        localStorage.setItem("proposal-history", JSON.stringify(updated));
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to generate proposal");
     } finally {
@@ -103,7 +134,6 @@ export default function ProposalWriter() {
             </h2>
           </div>
 
-          {/* Tone selector */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-white/70">Proposal Tone</label>
             <div className="flex gap-2">
@@ -170,6 +200,11 @@ export default function ProposalWriter() {
             </button>
           </div>
           {error && <p className="text-sm text-red-400">{error}</p>}
+          {!user && (
+            <p className="text-xs text-white/30 text-center">
+              <button onClick={onAuthRequired} className="text-violet-400 hover:text-violet-300">Sign in</button> to save your proposals
+            </p>
+          )}
         </div>
 
         {/* Output */}
@@ -184,7 +219,6 @@ export default function ProposalWriter() {
                   onClick={generateProposal}
                   disabled={loading}
                   className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white border border-white/10 hover:border-white/20 px-3 py-1.5 rounded-lg transition-all"
-                  title="Regenerate"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
                 </button>
@@ -235,10 +269,14 @@ export default function ProposalWriter() {
                   className="w-full text-left p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-all"
                 >
                   <div className="flex justify-between items-center">
-                    <p className="text-xs text-white/60 truncate">{item.brief}</p>
+                    <p className="text-xs text-white/60 truncate">
+                      {item.job_brief ? item.job_brief.slice(0, 60) + "..." : item.brief}
+                    </p>
                     <div className="flex gap-2 shrink-0 ml-2">
                       <span className="text-xs text-violet-400">{item.tone}</span>
-                      <span className="text-xs text-white/30">{item.date}</span>
+                      <span className="text-xs text-white/30">
+                        {new Date(item.created_at).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
                 </button>

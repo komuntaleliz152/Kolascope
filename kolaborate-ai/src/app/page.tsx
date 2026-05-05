@@ -1,16 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProposalWriter from "@/components/ProposalWriter";
 import ScopeEstimator from "@/components/ScopeEstimator";
-import { Sparkles, PenLine, BarChart3 } from "lucide-react";
+import AuthModal from "@/components/AuthModal";
+import { supabase } from "@/lib/supabase";
+import { Sparkles, PenLine, BarChart3, LogIn, LogOut, User } from "lucide-react";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("scope");
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [showAuth, setShowAuth] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    setUser(null);
+  }
 
   return (
     <main className="min-h-screen bg-[#0f0f1a] text-white">
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+
       {/* Header */}
       <header className="border-b border-white/10 bg-[#0f0f1a]/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -19,9 +39,30 @@ export default function Home() {
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <span className="font-bold text-lg">Kolaborate AI</span>
-            <span className="text-xs bg-violet-600/20 text-violet-400 border border-violet-500/30 px-2 py-0.5 rounded-full">Beta</span>
           </div>
-          <p className="text-sm text-white/40 hidden sm:block">AI toolkit for freelancers</p>
+          <div className="flex items-center gap-3">
+            {user ? (
+              <>
+                <div className="flex items-center gap-2 text-sm text-white/50">
+                  <User className="w-3.5 h-3.5" />
+                  <span className="hidden sm:block">{user.email}</span>
+                </div>
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white border border-white/10 hover:border-white/20 px-3 py-1.5 rounded-lg transition-all"
+                >
+                  <LogOut className="w-3.5 h-3.5" /> Sign out
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setShowAuth(true)}
+                className="flex items-center gap-1.5 text-xs text-white bg-violet-600 hover:bg-violet-700 px-3 py-1.5 rounded-lg transition-all"
+              >
+                <LogIn className="w-3.5 h-3.5" /> Sign in
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -55,18 +96,18 @@ export default function Home() {
           </TabsList>
 
           <TabsContent value="scope">
-            <ScopeEstimator />
+            <ScopeEstimator user={user} onAuthRequired={() => setShowAuth(true)} />
           </TabsContent>
 
           <TabsContent value="proposal">
-            <ProposalWriter />
+            <ProposalWriter user={user} onAuthRequired={() => setShowAuth(true)} />
           </TabsContent>
         </Tabs>
       </section>
 
       {/* Footer */}
-      <footer className="text-center text-xs text-white/20 py-8 border-t border-white/5">
-        Kolaborate AI · Kolaborate Build Challenge · April 2026
+      <footer className="text-center text-sm text-white/50 py-8 border-t border-white/10">
+        Kolaborate AI · Your freelance toolkit
       </footer>
     </main>
   );

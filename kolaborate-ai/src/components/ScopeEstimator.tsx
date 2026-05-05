@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2, BarChart3, AlertTriangle, Trash2, RefreshCw } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 interface ScopeResult {
   summary: string;
@@ -14,7 +16,12 @@ interface ScopeResult {
   risks: string[];
 }
 
-export default function ScopeEstimator() {
+interface Props {
+  user: User | null;
+  onAuthRequired: () => void;
+}
+
+export default function ScopeEstimator({ user, onAuthRequired }: Props) {
   const [projectDesc, setProjectDesc] = useState("");
   const [hourlyRate, setHourlyRate] = useState("");
   const [result, setResult] = useState<ScopeResult | null>(null);
@@ -39,6 +46,15 @@ export default function ScopeEstimator() {
       if (!res.ok) throw new Error(data.error || "Something went wrong");
       setResult(data.scope);
       setTimeout(() => setVisible(true), 50);
+
+      if (user) {
+        await supabase.from("scope_estimates").insert({
+          user_id: user.id,
+          project_desc: projectDesc,
+          hourly_rate: hourlyRate,
+          result: data.scope,
+        });
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to estimate scope");
     } finally {
@@ -114,6 +130,11 @@ export default function ScopeEstimator() {
           </button>
         </div>
         {error && <p className="text-sm text-red-400">{error}</p>}
+        {!user && (
+          <p className="text-xs text-white/30 text-center">
+            <button onClick={onAuthRequired} className="text-violet-400 hover:text-violet-300">Sign in</button> to save your estimates
+          </p>
+        )}
       </div>
 
       {/* Output */}
@@ -128,7 +149,6 @@ export default function ScopeEstimator() {
                 onClick={estimateScope}
                 disabled={loading}
                 className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white border border-white/10 hover:border-white/20 px-3 py-1.5 rounded-lg transition-all"
-                title="Regenerate"
               >
                 <RefreshCw className="w-3.5 h-3.5" /> Regenerate
               </button>
@@ -140,7 +160,6 @@ export default function ScopeEstimator() {
           <div className={`space-y-4 flex-1 transition-all duration-500 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
             <p className="text-sm text-white/50 bg-white/5 rounded-xl p-3">{result.summary}</p>
 
-            {/* Tasks */}
             <div className="space-y-2">
               {result.tasks.map((task, i) => (
                 <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/5">
@@ -155,7 +174,6 @@ export default function ScopeEstimator() {
               ))}
             </div>
 
-            {/* Totals */}
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center p-3 bg-violet-600/10 border border-violet-500/20 rounded-xl">
                 <p className="text-xs text-white/40 mb-1">Total Hours</p>
@@ -171,7 +189,6 @@ export default function ScopeEstimator() {
               </div>
             </div>
 
-            {/* Risks */}
             {result.risks.length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-semibold text-white/30 uppercase tracking-wider">Watch out for</p>
