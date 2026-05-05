@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
 
 const inter = Inter({ variable: "--font-sans", subsets: ["latin"], weight: ["400", "500", "600"] });
 const jakarta = Plus_Jakarta_Sans({ variable: "--font-heading", subsets: ["latin"], weight: ["600", "700", "800"] });
 
 export const metadata: Metadata = {
   title: "Kolaborate AI — Freelance Toolkit",
-  description: "AI-powered proposal writer and scope estimator for freelancers",
+  description: "AI-powered proposal writer, scope estimator and brief analyzer for freelancers",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${jakarta.variable} antialiased min-h-screen bg-background`}>
+      <body className={`${inter.variable} ${jakarta.variable} antialiased min-h-screen bg-[#0f0f1a] text-white`}>
+        <Navbar />
         {children}
       </body>
     </html>
