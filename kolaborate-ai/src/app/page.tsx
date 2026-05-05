@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProposalWriter from "@/components/ProposalWriter";
 import ScopeEstimator from "@/components/ScopeEstimator";
+import BriefAnalyzer from "@/components/BriefAnalyzer";
 import AuthModal from "@/components/AuthModal";
 import { supabase } from "@/lib/supabase";
-import { Sparkles, PenLine, BarChart3, LogIn, LogOut, User } from "lucide-react";
+import { Sparkles, PenLine, BarChart3, LogIn, LogOut, User, FileSearch } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 export default function Home() {
@@ -93,6 +94,12 @@ export default function Home() {
             >
               <PenLine className="w-3.5 h-3.5 mr-2" /> Proposal Writer
             </TabsTrigger>
+            <TabsTrigger
+              value="analyze"
+              className="data-[state=active]:bg-violet-600 data-[state=active]:text-white text-white/50 rounded-lg px-6 py-2 text-sm font-medium transition-all"
+            >
+              <FileSearch className="w-3.5 h-3.5 mr-2" /> Brief Analyzer
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="scope">
@@ -101,6 +108,10 @@ export default function Home() {
 
           <TabsContent value="proposal">
             <ProposalWriter user={user} onAuthRequired={() => setShowAuth(true)} />
+          </TabsContent>
+
+          <TabsContent value="analyze">
+            <BriefAnalyzer user={user} onAuthRequired={() => setShowAuth(true)} />
           </TabsContent>
         </Tabs>
       </section>
