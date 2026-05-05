@@ -74,6 +74,27 @@ export default function Home() {
         </div>
       </section>
 
+      {/* How it works */}
+      <section className="max-w-4xl mx-auto px-6 pb-20">
+        <h2 className="text-2xl font-bold text-center mb-12">How it works</h2>
+        <div className="grid md:grid-cols-4 gap-6">
+          {[
+            { step: "1", title: "Describe your project", desc: "Paste a job brief or describe what needs to be built in plain English." },
+            { step: "2", title: "AI analyzes it", desc: "Our AI breaks it down into tasks, estimates time, flags risks, and writes your proposal." },
+            { step: "3", title: "Review and refine", desc: "Regenerate, adjust the tone, or tweak the output until it's exactly right." },
+            { step: "4", title: "Use it", desc: "Copy your proposal, download as PDF, or save it to your history for later." },
+          ].map((item) => (
+            <div key={item.step} className="text-center">
+              <div className="w-10 h-10 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center mx-auto mb-4">
+                <span className="text-sm font-bold text-violet-400">{item.step}</span>
+              </div>
+              <h3 className="font-semibold mb-2">{item.title}</h3>
+              <p className="text-sm text-white/40 leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="text-center text-sm text-white/30 py-8 border-t border-white/5">
         Kolaborate AI · Your freelance toolkit
