@@ -50,7 +50,7 @@ export default function ProposalWriter({ user, onAuthRequired }: Props) {
   useEffect(() => {
     if (!user) {
       const saved = localStorage.getItem("proposal-history");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       const parsed: SavedProposal[] = saved ? JSON.parse(saved) : [];
       setHistory(parsed);
     }

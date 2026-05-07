@@ -63,7 +63,7 @@ export default function HistoryPage() {
 
   useEffect(() => {
     if (user) loadData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [user]);
 
   async function deleteProposal(id: string) {
