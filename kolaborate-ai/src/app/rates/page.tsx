@@ -152,7 +152,7 @@ export default function RatesPage() {
                     <span className="text-sm font-medium text-red-400">Minimum Rate</span>
                     <span className="text-2xl font-bold text-red-400">${result.minimumHourly}/hr</span>
                   </div>
-                  <p className="text-xs text-white/30">Bare minimum to cover your expenses. Don't go below this.</p>
+                  <p className="text-xs text-white/30">Bare minimum to cover your expenses. Don&apos;t go below this.</p>
                 </div>
 
                 <div className="p-4 bg-violet-600/10 border border-violet-500/30 rounded-xl">

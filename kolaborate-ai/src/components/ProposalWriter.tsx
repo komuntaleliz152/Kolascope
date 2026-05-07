@@ -43,11 +43,19 @@ export default function ProposalWriter({ user, onAuthRequired }: Props) {
     if (user) {
       loadHistory();
       loadProfile();
-    } else {
-      const saved = localStorage.getItem("proposal-history");
-      if (saved) setHistory(JSON.parse(saved));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+  useEffect(() => {
+    if (!user) {
+      const saved = localStorage.getItem("proposal-history");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const parsed: SavedProposal[] = saved ? JSON.parse(saved) : [];
+      setHistory(parsed);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function loadProfile() {
     const { data } = await supabase

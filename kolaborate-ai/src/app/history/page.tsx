@@ -40,18 +40,7 @@ export default function HistoryPage() {
   const [search, setSearch] = useState("");
   const router = useRouter();
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) {
-        router.push("/");
-        return;
-      }
-      setUser(data.user);
-      loadData();
-    });
-  }, []);
-
-  async function loadData() {
+  const loadData = async () => {
     setLoading(true);
     const [{ data: p }, { data: e }] = await Promise.all([
       supabase.from("proposals").select("*").order("created_at", { ascending: false }),
@@ -60,7 +49,22 @@ export default function HistoryPage() {
     if (p) setProposals(p);
     if (e) setEstimates(e);
     setLoading(false);
-  }
+  };
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) {
+        router.push("/");
+        return;
+      }
+      setUser(data.user);
+    });
+  }, [router]);
+
+  useEffect(() => {
+    if (user) loadData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   async function deleteProposal(id: string) {
     await supabase.from("proposals").delete().eq("id", id);

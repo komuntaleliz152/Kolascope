@@ -7,7 +7,6 @@ import type { User } from "@supabase/supabase-js";
 
 export default function AnalyzePage() {
   const [user, setUser] = useState<User | null>(null);
-  const [showAuth, setShowAuth] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));

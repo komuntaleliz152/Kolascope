@@ -28,18 +28,7 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) {
-        router.push("/");
-        return;
-      }
-      setUser(data.user);
-      loadProfile(data.user.id);
-    });
-  }, []);
-
-  async function loadProfile(userId: string) {
+  const loadProfile = async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
       .select("*")
@@ -54,7 +43,22 @@ export default function ProfilePage() {
       });
     }
     setLoading(false);
-  }
+  };
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) {
+        router.push("/");
+        return;
+      }
+      setUser(data.user);
+    });
+  }, [router]);
+
+  useEffect(() => {
+    if (user) loadProfile(user.id);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   async function saveProfile() {
     if (!user) return;
@@ -88,7 +92,7 @@ export default function ProfilePage() {
     <main className="max-w-2xl mx-auto px-6 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Profile</h1>
-        <p className="text-white/50">Your details auto-fill in the Proposal Writer so you don't retype them every time.</p>
+        <p className="text-white/50">Your details auto-fill in the Proposal Writer so you don&apos;t retype them every time.</p>
       </div>
 
       <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-5">
