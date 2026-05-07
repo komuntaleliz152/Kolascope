@@ -22,7 +22,7 @@ export default function ProposalPage() {
         <h1 className="text-3xl font-bold mb-2">Proposal Writer</h1>
         <p className="text-white/50">Generate a tailored, client-ready proposal in seconds.</p>
       </div>
-      <ProposalWriter user={user} onAuthRequired={() => setShowAuth(true)} />
+      <ProposalWriter user={user} onAuthRequired={() => {}} />
     </main>
   );
 }

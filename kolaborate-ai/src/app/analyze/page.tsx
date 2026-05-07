@@ -22,7 +22,7 @@ export default function AnalyzePage() {
         <h1 className="text-3xl font-bold mb-2">Brief Analyzer</h1>
         <p className="text-white/50">Identify gaps, red flags, and questions before you start work.</p>
       </div>
-      <BriefAnalyzer user={user} onAuthRequired={() => setShowAuth(true)} />
+      <BriefAnalyzer user={user} onAuthRequired={() => {}} />
     </main>
   );
 }

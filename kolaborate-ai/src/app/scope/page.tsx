@@ -22,7 +22,7 @@ export default function ScopePage() {
         <h1 className="text-3xl font-bold mb-2">Scope Estimator</h1>
         <p className="text-white/50">Describe your project and get a full breakdown instantly.</p>
       </div>
-      <ScopeEstimator user={user} onAuthRequired={() => setShowAuth(true)} />
+      <ScopeEstimator user={user} onAuthRequired={() => {}} />
     </main>
   );
 }
